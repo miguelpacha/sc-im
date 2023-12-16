@@ -78,12 +78,11 @@ char * v_name(int row, int col) {
     static char buf[20];
 
     v = lookat(sh, row, col);
-    if ( ! find_range((char *) 0, 0, v, v, &r) ) {
+    if ( find_range((char *) 0, 0, v, v, &r) )
         return (r->r_name);
-    } else {
-        (void) sprintf(buf, "%s%d", coltoa(col), row);
-        return (buf);
-    }
+    
+    (void) sprintf(buf, "%s%d", coltoa(col), row);
+    return (buf);
 }
 
 /**
@@ -96,14 +95,13 @@ char * v_name(int row, int col) {
  */
 
 char * parse_cell_name(int ignore_first_blocks, struct block * buf_in) {
-    struct block * b = buf_in;
     static char cell_name[3]; //length of max col is 3 (ZZZ)
     cell_name[0] = '\0';
-
-    while (ignore_first_blocks--) b = b->pnext;
-    while( b != NULL) {
+    
+    for(struct block * b = buf_in; ignore_first_blocks--; b = b->pnext);
+    
+    for(; b != NULL; b = b->pnext)
           (void) sprintf(cell_name + strlen(cell_name), "%c", b->value);
-          b = b->pnext;
-    }
+    
     return cell_name;
 }
