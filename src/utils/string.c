@@ -67,9 +67,8 @@ int del_char(char * str, int posicion) {
     int i, slen = strlen(str);
 
     if ( posicion >= slen || posicion < 0 ) return -1;
-    for (i = posicion; i < slen - 1; i++) {
+    for (i = posicion; i < slen - 1; i++)
         str[i] = str[i + 1];
-    }
     str[--slen] = '\0';
     return 0;
 }
@@ -88,9 +87,8 @@ int del_wchar(wchar_t * str, int posicion) {
     int i, slen = wcslen(str);
 
     if ( posicion >= slen || posicion < 0 ) return -1;
-    for (i = posicion; i < slen - 1; i++) {
+    for (i = posicion; i < slen - 1; i++)
         str[i] = str[i + 1];
-    }
     str[--slen] = '\0';
     return 0;
 }
@@ -144,55 +142,55 @@ int del_range_wchars(wchar_t * str, int d, int h) {
 }
 
 /**
- * \brief Add a C character to a cell in POSICION.
+ * \brief Add a C character to a cell in POSITION.
  *
  * \details Wide char version. STR should be
  * previously allocated with enough memory.
  *
  * \param[in] str
  * \param[in] c
- * \param[in] posicion
+ * \param[in] position
  *
  * \return 0 on success
  * \return -1 otherwise
  */
 
-int add_char(char * str, char c, int posicion) {
+int add_char(char * str, char c, int position) {
     int slen = strlen(str);
-    int len = slen - posicion;
-    if (posicion > slen) return -1;
+    int len = slen - position;
+    if (position > slen) return -1;
     while (len) {
-        str[posicion + len] = str[posicion + len -1];
+        str[position + len] = str[position + len -1];
         len--;
     }
     str[++slen] = '\0';
-    str[posicion] = c;
+    str[position] = c;
     return 0;
 }
 
 /**
- * \brief Add a C character to a cell in POSICION. Wide char version.
+ * \brief Add a C character to a cell in POSITION. Wide char version.
  *
  * \details STR should be previously allocated with enough memory.
  *
  * \param[in] str
  * \param[in] c
- * \param[in] posicion
+ * \param[in] position
  *
  * \return 0 on success
  * \return -1 otherwise
  */
 
-int add_wchar(wchar_t * str, wchar_t c, int posicion) {
+int add_wchar(wchar_t * str, wchar_t c, int position) {
     int slen = wcslen(str);
-    int len = slen - posicion;
-    if (posicion > slen) return -1;
+    int len = slen - position;
+    if (position > slen) return -1;
     while (len) {
-        str[posicion + len] = str[posicion + len -1];
+        str[position + len] = str[position + len -1];
         len--;
     }
     str[++slen] = L'\0';
-    str[posicion] = c;
+    str[position] = c;
     return 0;
 }
 
@@ -208,7 +206,6 @@ int add_wchar(wchar_t * str, wchar_t c, int posicion) {
 
 void subst(char * s, char from, char to) {
     while (*s == from) *s++ = to;
-    return;
 }
 
 /**
@@ -225,19 +222,15 @@ int str_in_str(char * s, char * b) {
     int slen = strlen(s);
     int blen = strlen(b);
 
-    if (! slen || ! blen) return -1;
+    if (! slen || ! blen)
+        return -1;
 
-    int e = 0;
-    int i;
-
-    while ( e <= slen-blen ) {
-        for (i=0; i<blen; i++) {
-            if (s[e+i] != b[i]) {
-                break;
-            }
-        }
-        if (i >= blen) return e;
-        else e++;
+    for (int e = 0; e <= slen-blen; e++ ) {
+        for (int i = 0; i < blen; i++)
+            if (s[e+i] != b[i])
+                break; 
+        if (i >= blen)
+            return e;
     }
     return -1;
 }
@@ -256,19 +249,15 @@ int wstr_in_wstr(wchar_t * s, wchar_t * b) {
     int slen = wcslen(s);
     int blen = wcslen(b);
 
-    if (! slen || ! blen) return -1;
+    if (! slen || ! blen)
+        return -1;
 
-    int e = 0;
-    int i;
-
-    while ( e <= slen-blen ) {
-        for (i=0; i<blen; i++) {
-            if (s[e+i] != b[i]) {
-                break;
-            }
-        }
-        if (i >= blen) return e;
-        else e++;
+    for (int e = 0; e <= slen-blen; e++ ) {
+        for (int i = 0; i < blen; i++)
+            if (s[e+i] != b[i])
+                break; 
+        if (i >= blen)
+            return e;
     }
     return -1;
 }
@@ -404,13 +393,12 @@ int isnumeric(char * string) {
 
 int clean_carrier(char * string) {
     int i, changes = 0, len = strlen(string);
-    for (i=0; i<len; i++) {
+    for (i=0; i<len; i++)
         if ( string[i] == '\r' || string[i] == '\n' ) {
             del_char(string, i);
             len--;
             changes = 1;
         }
-    }
     return changes;
 }
 
@@ -433,7 +421,7 @@ char * xstrtok(char * line, char * delims) {
 
  // see if we have reached the end of the line
     if (saveline == NULL || *saveline == '\0')
-       return(NULL);
+       return NULL;
  // return the number of characters that aren't delims
     n = strcspn(saveline, delims);
     p = saveline; // save start of this token
@@ -459,7 +447,7 @@ char * xstrtok(char * line, char * delims) {
 int count_word_occurrences(char * s, char * word, int overlap) {
     int c = 0, l = strlen(word);
 
-    while (*s != '\0') {
+    for (*s != '\0') {
         if (strncmp(s++, word, l)) continue;
         if (!overlap) s += l - 1;
         c++;
@@ -488,21 +476,20 @@ char * str_replace ( const char * string, const char * substr, const char * repl
         return strdup (string);
     newstr = strdup (string);
     head = newstr;
-    while ( (tok = strstr ( head, substr ))) {
+    while ( tok = strstr( head, substr ) ) {
         oldstr = newstr;
-        newstr = malloc ( strlen ( oldstr ) - strlen ( substr ) + strlen ( replacement ) + 1 );
+        newstr = malloc ( strlen( oldstr ) - strlen( substr ) + strlen( replacement ) + 1 );
         /* failed to alloc mem, free old string and return NULL */
-        if ( newstr == NULL ){
-            free (oldstr);
-            return NULL;
-        }
-        memcpy ( newstr, oldstr, tok - oldstr );
-        memcpy ( newstr + (tok - oldstr), replacement, strlen ( replacement ) );
-        memcpy ( newstr + (tok - oldstr) + strlen( replacement ), tok + strlen ( substr ), strlen ( oldstr ) - strlen ( substr ) - ( tok - oldstr ) );
-        memset ( newstr + strlen ( oldstr ) - strlen ( substr ) + strlen ( replacement ) , 0, 1 );
+        if ( newstr == NULL )
+            return free(oldstr), NULL;
+        
+        memcpy( newstr, oldstr, tok - oldstr );
+        memcpy( newstr + (tok - oldstr), replacement, strlen( replacement ) );
+        memcpy( newstr + (tok - oldstr) + strlen( replacement ), tok + strlen( substr ), strlen( oldstr ) - strlen( substr ) - ( tok - oldstr ) );
+        memset( newstr + strlen( oldstr ) - strlen( substr ) + strlen( replacement ) , 0, 1 );
         /* move back head right after the last replacement */
         head = newstr + (tok - oldstr) + strlen( replacement );
-        free (oldstr);
+        free(oldstr);
     }
     return newstr;
 }
