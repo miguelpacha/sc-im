@@ -122,7 +122,6 @@ void destroy_dictionary(struct dictionary * d) {
    }
 
    free(d);
-   return;
 }
 
 /**
@@ -137,10 +136,9 @@ int get_dict_buffer_size(struct dictionary * d) {
    struct nlist * nl;
    int count = 0;
 
-   for (nl = d->list; nl != NULL; nl = nl->next) {
+   for (nl = d->list; nl != NULL; nl = nl->next)
       /* <key> + '=' + <val> + '\n' */
       count += strlen(nl->key) + 1 + strlen(nl->val) + 1;
-   }
    return count;
 }
 
@@ -235,41 +233,27 @@ void parse_str(struct dictionary *d, const char *str, int split_on_blanks) {
                 put(d, key, "1");
                 break;
             }
-            if (*str == ' ') {
-                /* spaces in the key are invalid */
+            if (*str == ' ') // spaces in the key are invalid */
                 return;
-            }
 
             key[i++] = *str++;
 
-            if (i >= sizeof(key)) {
-                /* won't have room for final '\0' */
+            if (i >= sizeof(key)) // won't have room for final '\0'
                 return;
-            }
+            
         }
 
-        if (*str != '=') {
-            /* no value to collect */
+        if (*str != '=') // no value to collect 
             continue;
-        }
+        
+	/* collect the value */
 	str++;
-
-        /* collect the value */
-        i = 0;
-        for (;;) {
+        for (i = 0;i < sizeof(value); value[i++] = *str++)
             if (*str == 0 || *str == '\n' || (split_on_blanks && *str == ' ')) {
                 /* we are done with the value */
                 value[i] = 0;
                 put(d, key, value);
                 break;
             }
-
-            value[i++] = *str++;
-
-            if (i >= sizeof(value)) {
-                /* won't have room for final '\0' */
-                return;
-            }
-        }
     }
 }
