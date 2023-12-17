@@ -186,18 +186,18 @@ void create_undo_action() {
     undo_item.rows_format = NULL;
     undo_item.sheet = session->cur_doc->cur_sh; // we should keep the current sheet reference
 
-    undo_item.row_hidded  = NULL;
-    undo_item.row_showed  = NULL;
-    undo_item.row_frozed  = NULL;
+    undo_item.row_hidded    = NULL;
+    undo_item.row_showed    = NULL;
+    undo_item.row_frozed    = NULL;
     undo_item.row_unfrozed  = NULL;
-    undo_item.col_hidded  = NULL;
-    undo_item.col_showed  = NULL;
-    undo_item.col_frozed  = NULL;
+    undo_item.col_hidded    = NULL;
+    undo_item.col_showed    = NULL;
+    undo_item.col_frozed    = NULL;
     undo_item.col_unfrozed  = NULL;
     undo_item.modflg_bef = session->cur_doc->modflg;
     undo_item.maxrow_bef = undo_item.sheet->maxrow;
     undo_item.maxcol_bef = undo_item.sheet->maxcol;
-    return;
+
 }
 
 
@@ -228,8 +228,6 @@ void end_undo_action() {
         undo_list_pos--;
         clear_from_current_pos();
     }
-
-    return;
 }
 
 
@@ -283,7 +281,6 @@ void add_to_undolist(struct undo u) {
     }
     undo_list_pos++;
     undo_list_len++;
-    return;
 }
 
 
@@ -344,7 +341,8 @@ void dismiss_undo_item(struct undo * ul) {
         ul->allocations = NULL;
     }
 
-    if (ul->range_shift != NULL) free(ul->range_shift);    // Free undo_range_shift memory
+    if (ul->range_shift != NULL)
+        free(ul->range_shift);                             // Free undo_range_shift memory
     if (ul->cols_format != NULL) {                         // Free cols_format memory
         free(ul->cols_format->cols);
         free(ul->cols_format);
@@ -353,16 +351,15 @@ void dismiss_undo_item(struct undo * ul) {
         free(ul->rows_format->rows);
         free(ul->rows_format);
     }
-    if (ul->row_hidded  != NULL) free(ul->row_hidded);     // Free hidden row memory
-    if (ul->col_hidded  != NULL) free(ul->col_hidded);     // Free hidden col memory
-    if (ul->row_showed  != NULL) free(ul->row_showed);     // Free showed row memory
-    if (ul->row_frozed  != NULL) free(ul->row_frozed);     // Free frozed row memory
-    if (ul->col_showed  != NULL) free(ul->col_showed);     // Free showed col memory
-    if (ul->col_frozed  != NULL) free(ul->col_frozed);     // Free frozed col memory
+    if (ul->row_hidded    != NULL) free(ul->row_hidded);   // Free hidden row memory
+    if (ul->col_hidded    != NULL) free(ul->col_hidded);   // Free hidden col memory
+    if (ul->row_showed    != NULL) free(ul->row_showed);   // Free showed row memory
+    if (ul->row_frozed    != NULL) free(ul->row_frozed);   // Free frozed row memory
+    if (ul->col_showed    != NULL) free(ul->col_showed);   // Free showed col memory
+    if (ul->col_frozed    != NULL) free(ul->col_frozed);   // Free frozed col memory
     if (ul->row_unfrozed  != NULL) free(ul->row_unfrozed); // Free unfrozed row memory
     if (ul->col_unfrozed  != NULL) free(ul->col_unfrozed); // Free unfrozed col memory
 
-    return;
 }
 
 
@@ -385,7 +382,6 @@ void free_undo_node(struct undo * ul) {
         undo_list_len--;
         ul = e;
     }
-    return;
 }
 
 
@@ -404,8 +400,6 @@ void clear_from_current_pos() {
         free_undo_node(ul);
         undo_list->p_sig = NULL;
     }
-
-    return;
 }
 
 
@@ -417,9 +411,8 @@ void clear_undo_list() {
     if (undo_list == NULL) return;
 
     // Go to the beginning of the list
-    while (undo_list->p_ant != NULL ) {
+    while (undo_list->p_ant != NULL )
         undo_list = undo_list->p_ant;
-    }
 
     struct undo * ul = undo_list;
 
@@ -427,7 +420,6 @@ void clear_undo_list() {
 
     undo_list = NULL;
     undo_list_pos = 0;
-    return;
 }
 
 
@@ -446,16 +438,14 @@ int len_undo_list() {
  * return 0 if not exists or 1 if exists.
  */
 int ent_ptr_exists_on_list(struct ent_ptr * list, struct ent_ptr * ep) {
-    int repeated = 0;
-    if (ep == NULL) return repeated;
-    while (list != NULL && list->vp != NULL) {
-        if (list->sheet == ep->sheet && list->vp->row == ep->vp->row && list->vp->col == ep->vp->col) {
-            repeated = 1;
-            break;
-        }
-        list = list->next;
-    }
-    return repeated;
+    if (ep == NULL)
+        return 0;
+    for ( ; list != NULL && list->vp != NULL ; list = list->next)
+        if (   list->sheet   == ep->sheet
+            && list->vp->row == ep->vp->row
+            && list->vp->col == ep->vp->col)
+            return 1;
+    return 0;
 }
 
 /**
@@ -557,7 +547,6 @@ void copy_to_undostruct (struct sheet * sh, int ri, int ci, int rf, int cf, char
             if (destination == NULL) y_cells++;
             else *destination = ++y_cells;
         }
-    return;
 }
 
 
@@ -632,7 +621,6 @@ void copy_cell_to_undostruct (struct ent_ptr * e_ptr, struct sheet * sh_ori, str
         new_ptr->next = undo_item.removed;
         undo_item.removed = new_ptr;
     }
-    return;
 }
 
 
@@ -661,7 +649,6 @@ void add_undo_col_format(int col, int type, int fwidth, int precision, int realf
     undo_item.cols_format->cols[ undo_item.cols_format->length - 1].fwidth = fwidth;
     undo_item.cols_format->cols[ undo_item.cols_format->length - 1].precision = precision;
     undo_item.cols_format->cols[ undo_item.cols_format->length - 1].realfmt = realfmt;
-    return;
 }
 
 
@@ -686,7 +673,6 @@ void add_undo_row_format(int row, int type, unsigned char format) {
     undo_item.rows_format->rows[ undo_item.rows_format->length - 1].type = type;
     undo_item.rows_format->rows[ undo_item.rows_format->length - 1].row = row;
     undo_item.rows_format->rows[ undo_item.rows_format->length - 1].format = format;
-    return;
 }
 
 
@@ -715,7 +701,6 @@ void save_undo_range_shift(int delta_rows, int delta_cols, int tlrow, int tlcol,
     urs->brrow = brrow;
     urs->brcol = brcol;
     undo_item.range_shift = urs;
-    return;
 }
 
 /*
@@ -799,7 +784,6 @@ void undo_hide_show(int row, int col, char type, int arg) {
 
         }
     }
-    return;
 }
 
 
@@ -870,7 +854,6 @@ void undo_freeze_unfreeze(int row, int col, char type, int arg) {
 
         }
     }
-    return;
 }
 
 
@@ -884,10 +867,8 @@ void undo_freeze_unfreeze(int row, int col, char type, int arg) {
  */
 void do_undo() {
     struct roman * roman = session->cur_doc;
-    if (undo_list == NULL || undo_list_pos == 0) {
-        sc_error("No UNDO's left.");
-        return;
-    }
+    if (undo_list == NULL || undo_list_pos == 0)
+        return sc_error("No UNDO's left.");
 
     // move to the according sheet
     struct sheet * sh = undo_list->sheet;
@@ -900,11 +881,8 @@ void do_undo() {
     struct undo * ul = undo_list;
 
     // removed added ents
-    struct ent_ptr * i = ul->added;
-    while (i != NULL) {
+    for (struct ent_ptr * i = ul->added; i != NULL; i = i->next)
         erase_area(i->sheet, i->vp->row, i->vp->col, i->vp->row, i->vp->col, 1, 0);
-        i = i->next;
-    }
 
     // Make undo shift, if any
     if (ul->range_shift != NULL) {
@@ -914,20 +892,13 @@ void do_undo() {
         int tlrow = ul->range_shift->tlrow;
         int brcol = ul->range_shift->brcol;
         int tlcol = ul->range_shift->tlcol;
-        // fix marks for rows
-        if (deltarows > 0)      // sj
-            fix_marks(sh, -(brrow - tlrow + 1), 0, tlrow, sh->maxrow, tlcol, brcol);
-        else if (deltarows < 0) // sk
-            fix_marks(sh,  (brrow - tlrow + 1), 0, tlrow, sh->maxrow, tlcol, brcol);
+        
+        fix_marks(sh, (deltarows > 0) ? -(brrow - tlrow + 1) : (brrow - tlrow + 1), 0, tlrow, sh->maxrow, tlcol, brcol);
 
         // handle row_hidden
         fix_row_hidden(sh, deltarows, tlrow, sh->maxrow);
 
-        // fix marks for cols
-        if (deltacols > 0)      // sl
-            fix_marks(sh, 0, -(brcol - tlcol + 1), tlrow, brrow, tlcol, sh->maxcol);
-        else if (deltacols < 0) // sh
-            fix_marks(sh, 0,  (brcol - tlcol + 1), tlrow, brrow, tlcol, sh->maxcol);
+        fix_marks(sh, 0, (deltacols > 0) ? -(brcol - tlcol + 1) : (brcol - tlcol + 1), tlrow, brrow, tlcol, sh->maxcol);
 
         // handle col_hidden
         fix_col_hidden(sh, deltacols, tlcol, sh->maxcol);
@@ -992,30 +963,26 @@ void do_undo() {
     if (ul->col_hidded != NULL) {
         int * pd = ul->col_hidded;
         int left = *(pd++);
-        while (left--) {
+        while (left--)
             sh->col_hidden[*(pd++)] = FALSE;
-        }
     }
     else if (ul->col_showed  != NULL) {
         int * pd = ul->col_showed;
         int left = *(pd++);
-        while (left--) {
+        while (left--)
             sh->col_hidden[*(pd++)] = TRUE;
-        }
     }
     else if (ul->row_hidded  != NULL) {
         int * pd = ul->row_hidded;
         int left = *(pd++);
-        while (left--) {
+        while (left--)
             sh->row_hidden[*(pd++)] = FALSE;
-        }
     }
     else if (ul->row_showed  != NULL) {
         int * pd = ul->row_showed;
         int left = *(pd++);
-        while (left--) {
+        while (left--)
             sh->row_hidden[*(pd++)] = TRUE;
-        }
     }
 
     // freeze frozen cols and rows
@@ -1023,75 +990,59 @@ void do_undo() {
     if (ul->col_unfrozed != NULL) {
         int * pd = ul->col_unfrozed;
         int left = *(pd++);
-        while (left--) {
+        while (left--)
             sh->col_frozen[*(pd++)] = TRUE;
-        }
     }
     if (ul->col_frozed != NULL) {
         int * pd = ul->col_frozed;
         int left = *(pd++);
-        while (left--) {
+        while (left--)
             sh->col_frozen[*(pd++)] = FALSE;
-        }
     }
     if (ul->row_unfrozed  != NULL) {
         int * pd = ul->row_unfrozed;
         int left = *(pd++);
-        while (left--) {
+        while (left--)
             sh->row_frozen[*(pd++)] = TRUE;
-        }
     }
-    if (ul->row_frozed  != NULL) {
+    if (ul->row_frozed != NULL) {
         int * pd = ul->row_frozed;
         int left = *(pd++);
-        while (left--) {
+        while (left--)
             sh->row_frozen[*(pd++)] = FALSE;
-        }
     }
 
     // Restore previous col format
     if (ul->cols_format != NULL) {
         struct undo_cols_format * uf = ul->cols_format;
         int size = uf->length;
-        int i;
 
-        for (i=0; i < size; i++) {
+        for (int i=0; i < size; i++)
            if (uf->cols[i].type == 'R') {
                sh->fwidth[uf->cols[i].col]    = uf->cols[i].fwidth;
                sh->precision[uf->cols[i].col] = uf->cols[i].precision;
                sh->realfmt[uf->cols[i].col]   = uf->cols[i].realfmt;
            }
-        }
     }
 
     // Restore previous row format
     if (ul->rows_format != NULL) {
         struct undo_rows_format * uf = ul->rows_format;
         int size = uf->length;
-        int i;
-
-        for (i=0; i < size; i++) {
-           if (uf->rows[i].type == 'R') {
+        for (int i=0; i < size; i++) 
+           if (uf->rows[i].type == 'R')
                sh->row_format[uf->rows[i].row] = uf->rows[i].format;
-           }
-        }
     }
 
+    struct ent * p;
     // for every ent in added and removed, we reeval expression to update graph
-    struct ent_ptr * ie = ul->added;
-    while (ie != NULL) {
-        struct ent * p;
+    while (struct ent_ptr * ie = ul->added; ie != NULL; ie = ie->next)
         if ((p = *ATBL(ie->sheet, ie->sheet->tbl, ie->vp->row, ie->vp->col)) && p->expr)
             EvalJustOneVertex(ie->sheet, p, 1);
-        ie = ie->next;
-    }
-    ie = ul->removed;
-    while (ie != NULL) {
-        struct ent * p;
+
+    for (ie = ul->removed; ie != NULL; ie = ie->next)    
         if ((p = *ATBL(ie->sheet, ie->sheet->tbl, ie->vp->row, ie->vp->col)) && p->expr)
             EvalJustOneVertex(ie->sheet, p, 1);
-        ie = ie->next;
-    }
 
     // Restores cursor position
     sh->currow = ori_currow;
@@ -1105,9 +1056,9 @@ void do_undo() {
     sh->maxrow = undo_item.maxrow_bef;
     sh->maxcol = undo_item.maxcol_bef;
 
-    if (undo_list->p_ant != NULL) undo_list = undo_list->p_ant;
+    if (undo_list->p_ant != NULL)
+        undo_list = undo_list->p_ant;
     sc_info("Change: %d of %d", --undo_list_pos, len_undo_list());
-    return;
 }
 
 
@@ -1120,13 +1071,12 @@ void do_undo() {
 void do_redo() {
     struct roman * roman = session->cur_doc;
 
-    if ( undo_list == NULL || undo_list_pos == len_undo_list()  ) {
-        sc_error("No REDO's left.");
-        return;
-    }
+    if ( undo_list == NULL || undo_list_pos == len_undo_list() )       
+        return sc_error("No REDO's left.");
 
-    if ((undo_list->p_ant != NULL || undo_list_pos != 0)
-    && (undo_list->p_sig != NULL)) undo_list = undo_list->p_sig;
+    if (    (undo_list->p_ant != NULL || undo_list_pos != 0)
+         && (undo_list->p_sig != NULL))
+        undo_list = undo_list->p_sig;
 
     struct undo * ul = undo_list;
     struct sheet * sh = undo_list->sheet;
@@ -1139,11 +1089,8 @@ void do_redo() {
     roman->cur_sh = sh;
 
     // Remove 'ent' elements
-    struct ent_ptr * i = ul->removed;
-    while (i != NULL) {
+    for (struct ent_ptr * i = ul->removed; i != NULL; i = i->next)
         erase_area(i->sheet, i->vp->row, i->vp->col, i->vp->row, i->vp->col, 1, 0);
-        i = i->next;
-    }
 
     // Make undo shift, if any
     if (ul->range_shift != NULL) {
@@ -1154,19 +1101,13 @@ void do_redo() {
         int brcol = ul->range_shift->brcol;
         int tlcol = ul->range_shift->tlcol;
         // fix marks for rows
-        if (deltarows > 0)      // sj
-            fix_marks(sh,  (brrow - tlrow + 1), 0, tlrow, sh->maxrow, tlcol, brcol);
-        else if (deltarows < 0) // sk
-            fix_marks(sh, -(brrow - tlrow + 1), 0, tlrow, sh->maxrow, tlcol, brcol);
+        fix_marks(sh,  (deltarows > 0) ? (brrow - tlrow + 1) -(brrow - tlrow + 1): , 0, tlrow, sh->maxrow, tlcol, brcol);
 
         // handle row_hidden
         fix_row_hidden(sh, -deltarows, tlrow, sh->maxrow);
 
         // fix marks for cols
-        if (deltacols > 0)      // sl
-            fix_marks(sh, 0,  (brcol - tlcol + 1), tlrow, brrow, tlcol, sh->maxcol);
-        else if (deltacols < 0) // sh
-            fix_marks(sh, 0, -(brcol - tlcol + 1), tlrow, brrow, tlcol, sh->maxcol);
+        fix_marks(sh, 0,  (deltacols > 0) ? (brcol - tlcol + 1) -(brcol - tlcol + 1): , tlrow, brrow, tlcol, sh->maxcol);
 
         // handle col_hidden
         fix_col_hidden(sh, -deltacols, tlcol, sh->maxcol);
@@ -1231,30 +1172,26 @@ void do_redo() {
     if (ul->col_hidded != NULL) {
         int * pd = ul->col_hidded;
         int left = *(pd++);
-        while (left--) {
+        while (left--)
             sh->col_hidden[*(pd++)] = TRUE;
-        }
     }
     else if (ul->col_showed  != NULL) {
         int * pd = ul->col_showed;
         int left = *(pd++);
-        while (left--) {
+        while (left--)
             sh->col_hidden[*(pd++)] = FALSE;
-        }
     }
     else if (ul->row_hidded  != NULL) {
         int * pd = ul->row_hidded;
         int left = *(pd++);
-        while (left--) {
+        while (left--)
             sh->row_hidden[*(pd++)] = TRUE;
-        }
     }
     else if (ul->row_showed  != NULL) {
         int * pd = ul->row_showed;
         int left = *(pd++);
-        while (left--) {
+        while (left--)
             sh->row_hidden[*(pd++)] = FALSE;
-        }
     }
 
     // freeze frozen cols and rows
@@ -1262,75 +1199,58 @@ void do_redo() {
     if (ul->col_unfrozed != NULL) {
         int * pd = ul->col_unfrozed;
         int left = *(pd++);
-        while (left--) {
+        while (left--)
             sh->col_frozen[*(pd++)] = FALSE;
-        }
     }
-    if (ul->col_frozed  != NULL) {
+    if (ul->col_frozed != NULL) {
         int * pd = ul->col_frozed;
         int left = *(pd++);
-        while (left--) {
+        while (left--)
             sh->col_frozen[*(pd++)] = TRUE;
-        }
     }
-    if (ul->row_unfrozed  != NULL) {
+    if (ul->row_unfrozed != NULL) {
         int * pd = ul->row_unfrozed;
         int left = *(pd++);
-        while (left--) {
+        while (left--)
             sh->row_frozen[*(pd++)] = FALSE;
-        }
     }
-    if (ul->row_frozed  != NULL) {
+    if (ul->row_frozed != NULL) {
         int * pd = ul->row_frozed;
         int left = *(pd++);
-        while (left--) {
+        while (left--)
             sh->row_frozen[*(pd++)] = TRUE;
-        }
     }
 
     // Restore new col format
     if (ul->cols_format != NULL) {
         struct undo_cols_format * uf = ul->cols_format;
         int size = uf->length;
-        int i;
-
-        for (i=0; i < size; i++) {
+        for (int i=0; i < size; i++)
             if (uf->cols[i].type == 'A') {
-                sh->fwidth[uf->cols[i].col]    = uf->cols[i].fwidth;
+                sh->fwidth   [uf->cols[i].col] = uf->cols[i].fwidth;
                 sh->precision[uf->cols[i].col] = uf->cols[i].precision;
-                sh->realfmt[uf->cols[i].col]   = uf->cols[i].realfmt;
+                sh->realfmt  [uf->cols[i].col] = uf->cols[i].realfmt;
             }
-        }
     }
 
     // Restore new row format
     if (ul->rows_format != NULL) {
         struct undo_rows_format * uf = ul->rows_format;
         int size = uf->length;
-        int i;
-
-        for (i=0; i < size; i++) {
-           if (uf->rows[i].type == 'A') {
+        for (int i=0; i < size; i++)
+           if (uf->rows[i].type == 'A')
                sh->row_format[uf->rows[i].row] = uf->rows[i].format;
-           }
-        }
     }
 
-    // for every ent in added and removed, we reeval expression to update graph
-    struct ent_ptr * ie = ul->added;
-    while (ie != NULL) {
-        struct ent * p;
+    struct ent * p;
+    // for every ent in added and removed, we reeval expression to update graph   
+    for (struct ent_ptr * ie = ul->added; ie != NULL; ie = ie->next)
         if ((p = *ATBL(ie->sheet, ie->sheet->tbl, ie->vp->row, ie->vp->col)) && p->expr)
             EvalJustOneVertex(ie->sheet, p, 1);
-        ie = ie->next;
-    }
-    ie = ul->removed;
-    while (ie != NULL) {
-        struct ent * p;
+        
+    for (struct ie = ul->removed; ie != NULL; ie = ie->next)
         if ((p = *ATBL(ie->sheet, ie->sheet->tbl, ie->vp->row, ie->vp->col)) && p->expr)
             EvalJustOneVertex(ie->sheet, p, 1);
-        ie = ie->next;
-    }
 
     // Restores cursor position
     sh->currow = ori_currow;
@@ -1345,6 +1265,5 @@ void do_redo() {
     sh->maxcol = undo_item.maxcol_aft;
 
     sc_info("Change: %d of %d", ++undo_list_pos, len_undo_list());
-    return;
 }
 #endif
